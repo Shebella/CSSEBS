@@ -1,0 +1,2 @@
+svnVersoin=${SVN_REVISION}
+buildNumber=${BUILD_NUMBER}

@@ -1,0 +1,79 @@
+edited by Ben @2013/07/23  
+=====relative libraries=====
+-jersey libs -for jax-rs based restful api.
+-jets3t libs -for communication with walrus 
+-jdbc -EBS do db operation (CURD) by jdbc.
+
+
+=====build stage=====
+sbx_svr.war use maven to build war file,maven project file is pom.xml.
+refer to documentation of maven to use it.  
+
+or just use "mvn clean package -Dmaven.test.skip=true" to build sbx.war
+
+
+=====deploy stage=====
+sbx_deploy.sh include install tomcat by rpm,cp sbx_svr.war to tomcat's webapp
+folder,create sql schema ... .
+
+=====webapp initiate stage=====
+according to J2EE container's rule,and the configuration in $SBX_SVR/WEB-INF/web.xml:
+<listener>
+    <listener-class>
+        rest.Initaitor
+    </listener-class>
+</listener>
+
+each time when tomcat and sbx_svr webapp start,method "contextInitaite(...)" in the class rest.Initaitor 
+will be invoked to do init process,including setup up the configure variable
+in the class Config. 
+
+
+
+=====environment variables=====
+
+beside fake error code response,no environment vairables associated with ebs itself need to be configured,
+but there may be some environement variables of tomcat and libs(ex:log4j) need
+to be configured,refer to documentation of libs. 
+
+=====configuration files=====
+
+1. $SBX_SVR/WEB-INF/web.xml
+tomcat webapp level  configuration file.
+(ex:ldap setup ...)
+2. $SBX_SVR /WEB-INF/classes/ebs.properties
+ebs level normal configuration file.
+(ex:max query event limit,unlimited with -1...) 
+3. $SBX_SVR /WEB-INF/classes/jets3t.properties
+jets3t(ver.9.1) used to communicate with walrus in rename api.
+
+=====log files=====
+all log files are included in /opt/apache-tomcat/logs/,
+
+1.EBS_Initaitor.log        -log about initiate stage of tomcat webapp.
+
+2.EBS_errorcode.log        -each http response with error code will be logged into this file.
+
+3.EBS_AccountService.log   -log about account service.
+
+4.ESB_api_error            -common api error.
+
+5.catalina.$date.log       -echo request and response of ebs and test api will
+be recorded there.
+
+it's depended on  configuration  in  $SBX_SVR/WEB-INF/web.xml  as beblow:
+	<init-param>
+                <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
+                <param-value>com.sun.jersey.api.container.filter.LoggingFilter</param-value>
+        </init-param>
+
+        <init-param>
+                <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
+                <param-value>com.sun.jersey.api.container.filter.LoggingFilter</param-value>
+        </init-param>
+
+=====fake error response==== 
+
+====unit test=====
+
+

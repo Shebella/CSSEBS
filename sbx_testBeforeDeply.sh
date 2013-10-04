@@ -1,0 +1,2 @@
+unset EBSAPISTUB
+mvn test

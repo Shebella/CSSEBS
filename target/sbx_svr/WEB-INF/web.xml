@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app
+  xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+  version="2.4"
+>
+
+    <servlet>
+        <!-- jersey lib's fundamental configuration:with it you can use jersey in tomcat's webapp -->
+	<servlet-name>Jersey Web Application</servlet-name>
+        <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+        <load-on-startup>1</load-on-startup>
+	<!-- -->
+
+	<!-- jersey lib's configuration about loggin each request/response of ebs api -->
+        <init-param>
+                <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
+                <param-value>com.sun.jersey.api.container.filter.LoggingFilter</param-value>
+        </init-param>
+
+        <init-param>
+                <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
+                <param-value>com.sun.jersey.api.container.filter.LoggingFilter;rest.ResponseCorsFilter</param-value>
+        </init-param>
+        <!-- -->
+
+
+    </servlet>
+
+
+    <!-- all path as /sbx_svr/rest/* will be mapped and processed by Jersey web application setup as above -->
+    <servlet-mapping>
+        <servlet-name>Jersey Web Application</servlet-name>
+        <url-pattern>/rest/*</url-pattern>
+    </servlet-mapping>
+    <!-- -->
+
+    <!-- setup "init listener" which is used to do init work when tomcat start webapp -->
+    <listener>
+       <listener-class>
+        rest.Initaitor
+       </listener-class>
+    </listener>
+   <!-- -->
+
+
+<!-- init variable read by rest.Initaitor -->
+<context-param>
+    <param-name>ldapUrl</param-name>
+    <param-value>ldap://%ip%/CN=%user%,CN=Users,DC=ITRI,DC=DS</param-value>
+</context-param>
+
+<context-param>
+    <param-name>ldapAccount</param-name>
+    <param-value>CN=%user%,CN=Users,DC=ITRI,DC=DS</param-value>
+</context-param>
+
+	
+<context-param>
+    <param-name>EUCA_IP</param-name>
+    <param-value>127.0.0.1</param-value>
+</context-param>
+
+<context-param>
+    <param-name>DB_IP</param-name>
+    <param-value>127.0.0.1</param-value>
+</context-param>
+
+<context-param>
+    <param-name>LDAP</param-name>
+    <param-value>itri.ds</param-value>
+</context-param>
+<!-- -->
+
+</web-app>
